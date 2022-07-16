@@ -6,6 +6,7 @@ import NorthWestIcon from '@mui/icons-material/NorthWest';
 import GradingIcon from '@mui/icons-material/Grading';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
+import { Link } from "react-router-dom";
 
 export default function Sidebar() {
   return (
@@ -13,14 +14,20 @@ export default function Sidebar() {
         <div className="sidebarWrapper">
             <div className='sidebarMenue'>
             <ul className='sidebarList'>
-                <li className='sidebarListItem active'>
-                    <SouthEastIcon className='sidebarIcon'/>
-                    Container Inbound
-                </li>
-                <li className='sidebarListItem'>
-                    <NorthWestIcon className='sidebarIcon'/>
-                    Container Outbound
-                </li>
+                <Link to="/" className='link'>
+                    <li className='sidebarListItem'>
+                        <SouthEastIcon className='sidebarIcon'/>
+                        Container Inbound
+                    </li>
+                </Link>
+                
+                <Link to="/container_out" className='link'>
+                    <li className='sidebarListItem'>
+                        <NorthWestIcon className='sidebarIcon'/>
+                        Container Outbound
+                    </li>
+                </Link>
+                
                 <li className='sidebarListItem'>
                     <GradingIcon className='sidebarIcon'/>
                     Reservation

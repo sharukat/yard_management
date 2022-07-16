@@ -1,8 +1,10 @@
-import React from 'react'
+import "./Container_Out.css";
 
 const Container_Out = () => {
   return (
-    <div>Container_Out</div>
+    <div className="container_out">
+      <h2 className="title">Container Outbound</h2>
+    </div>
   )
 }
 
