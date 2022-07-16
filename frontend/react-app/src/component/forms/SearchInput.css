@@ -1,0 +1,10 @@
+.searchInput{
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.react-select{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
