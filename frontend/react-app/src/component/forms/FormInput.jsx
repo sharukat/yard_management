@@ -5,7 +5,7 @@ const FormInput = (props) => {
     return (
         <div className='formInput'>
             <label>{label}</label>
-            <input onChange={onChange} placeholder={placeholder} readOnly={readOnly} name={name}/> 
+            <input onChange={onChange} placeholder={placeholder} readOnly={readOnly} name={name} type={type}/> 
             <span>{errorMessage}</span>
         </div>
     );

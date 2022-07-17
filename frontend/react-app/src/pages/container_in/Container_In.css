@@ -56,5 +56,20 @@ form{
     margin-left: 20px;
 }
 
+.grid{
+    width: 100%;
+}
+
+.grid-col1{
+    width: 50%
+}
+
+.grid-col2{
+    width: 100%
+}
+
+.title{
+    margin-bottom: 30px;
+}
 
     

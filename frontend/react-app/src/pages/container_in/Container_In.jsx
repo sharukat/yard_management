@@ -6,12 +6,76 @@ import axios from 'axios';
 import SearchInput from "../../component/forms/SearchInput";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
+import Select from 'react-select'
+import SelectInput from "../../component/forms/SelectInput";
+
+const reserveOptions = [
+    { value: 'Yes', label: 'Yes' },
+    { value: 'No', label: 'No' },
+]
+
+const sizeOptions = [
+    { value: '20', label: '20' },
+    { value: '40', label: '40' },
+]
+
+const conditionOptions = [
+    { value: 'AV', label: 'AV' },
+    { value: 'UC', label: 'UC' },
+    { value: 'DM', label: 'DM' },
+    { value: 'DF', label: 'DF' },
+    { value: 'MT', label: 'MT' },
+    { value: 'UV', label: 'UV' },
+    { value: 'SM', label: 'SM' },
+    { value: 'SV', label: 'SV' },
+    { value: 'AC', label: 'AC' },
+    { value: 'AB', label: 'AB' },
+    { value: 'ST', label: 'ST' },
+    { value: 'XX', label: 'XX' },
+    { value: 'AN', label: 'AN' },
+    { value: 'CU', label: 'CU' },
+    { value: 'UN', label: 'UN' },
+    { value: 'NO', label: 'NO' },
+    { value: 'OC', label: 'OC' },
+    { value: 'YC', label: 'YC' },
+    { value: 'QV', label: 'QV' },
+    { value: 'GP', label: 'GP' },
+    { value: 'IC', label: 'IC' },
+    { value: 'US', label: 'US' },
+    { value: 'UX', label: 'UX' },
+    { value: 'VA', label: 'VA' },
+    { value: 'N', label: 'N' },
+    { value: 'A', label: 'A' },
+    { value: 'U', label: 'U' },
+    { value: 'V', label: 'V' },
+    { value: 'C', label: 'C' },
+]
+
+const statusOptions = [
+    { value: 'MT', label: 'MT' },
+    { value: 'UC', label: 'UC' },
+    { value: 'AV', label: 'AV' },
+    { value: 'DM', label: 'DM' },
+    { value: 'MY', label: 'MY' }, 
+    { value: 'NT', label: 'NT' },
+    { value: 'ET', label: 'ET' },
+    { value: 'LD', label: 'LD' },
+    { value: 'LS', label: 'LS' },
+    { value: 'GP', label: 'GP' },
+    { value: 'HC', label: 'HC' },
+    { value: 'TY', label: 'TY' },
+    { value: 'MR', label: 'MR' },
+    { value: 'TM', label: 'TM' },
+    { value: 'EM', label: 'EM' },
+
+]
+
 
 
 const Container_In = () => {
 
     let currentDate = new Date();
-    const token = 'Token' + ' 0ed599e1dd6fdb32cd11e3d4cc8620fc7971a1a0d0170627d42f2aabee8cd961';
+    const token = 'Token' + ' 844cc0d9c5390af2e219a5b53b5242f139862f8416d286e920bed42ee30323a3';
     
     const [values, setValues] = useState({
         containerNumber: "",
@@ -19,34 +83,57 @@ const Container_In = () => {
         containerType: "",
         containerSize: "",
         containerStatus: "",
-        containerCondition: "",
+        blNumber: "",
+        reserve: "",
+        currentCondition: "",
+        previousCondition: "",
         consignee: "",
         dateIn: "",
         vehicleIn: "",
+        arrivalDate: "",
+        voyage: "",
+        specialCode: "",
+        previousLocation: "",
+        currentLocation: "",
     });
 
     // ==================================================================================================================
     // Vessel select useStates
-    const [items, setItems] = useState([]);
-    const [inputValue, setValue] = useState('');
-    const [selectedValue, setSelectedValue] = useState(null);
 
-    // handle input change event
-    const handleInputChange = value => {
-        setValue(value);
+    const [inputValueA, setValueA] = useState('');
+    const [selectedValueA, setSelectedValueA] = useState(null);
+
+    const [inputValueB, setValueB] = useState('');
+    const [selectedValueB, setSelectedValueB] = useState(null);
+
+    // handle Ex Vessel input change event
+    const handleInputChangeA = value => {
+        setValueA(value);
     };
 
-    // handle selection
-    const handleChange = value => {
-        setSelectedValue(value);
+    // handle Ex Vessel selection
+    const handleChangeA = value => {
+        setSelectedValueA(value);
     }
 
-    const fetchVessels = () => {
-        const url = 'http://127.0.0.1:8000/application/vessels/?vessel=' + inputValue;
-        const headers = {
-            'Authorization': token,
-            'Content-Type': 'application/json'
-        }
+    // handle Vessel input change event
+    const handleInputChangeB = value => {
+        setValueB(value);
+    };
+
+    // handle Vessel selection
+    const handleChangeB = value => {
+        setSelectedValueB(value);
+    }
+
+    const headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json'
+    }
+
+    const fetchVesselsA = () => {
+        const url = 'http://127.0.0.1:8000/application/vessels/?vessel=' + inputValueA;
+        
         return axios.get(url, {headers: headers})
             .then(res => {
                 const vessels = res.data;
@@ -54,6 +141,40 @@ const Container_In = () => {
                 return vessels;
             });
     }
+
+    const fetchVesselsB = () => {
+        const url = 'http://127.0.0.1:8000/application/vessels/?vessel=' + inputValueB;
+
+        return axios.get(url, {headers: headers})
+            .then(res => {
+                const vessels = res.data;
+                console.log(vessels);
+                return vessels;
+            });
+    }
+    // ==================================================================================================================
+    
+    // Size Select
+    const [selectedSizeValue, setSelectedSizeValue] = useState('');
+    const handleChangeSize = value => {setSelectedSizeValue(value);}
+
+    // Previous Condition Select
+    const [selectedPreviousCondValue, setPreviousSelectedCondValue] = useState('');
+    const handleChangePreviousCond = value => {setPreviousSelectedCondValue(value);}
+
+    // Current Condition Select
+    const [selectedCurrentCondValue, setCurrentSelectedCondValue] = useState('');
+    const handleChangeCurrentCond = value => {setCurrentSelectedCondValue(value);}
+
+    // Reserve Select
+    const [selectedReserveValue, setSelectedReserveValue] = useState('');
+    const handleChangeReserve = value => {setSelectedReserveValue(value);}
+
+    // Status Select
+    const [selectedStatusValue, setSelectedStatusValue] = useState('');
+    const handleChangeStatus = value => {setSelectedStatusValue(value);}
+
+
     // ==================================================================================================================
 
     // Customer select useStates
@@ -88,37 +209,30 @@ const Container_In = () => {
     
     // ==================================================================================================================
 
-    const inputContainer = [
-        {id:1, label: "Container", name: "containerNumber", type: "text",},
-    ]
+    const inputContainer = [{id:1, label: "Container", name: "containerNumber", type: "text",},]
 
-    const inputSerial = [
-        {id:1, label: "Serial", name: "serialNumber", type: "text",},
+    const inputSerial = [{id:1, label: "Serial", name: "serialNumber", type: "text",},]
 
-    ]
     const inputsColumnA = [
         {id:1, label: "Consignee", name: "consignee", type: "text",},
-        {id:2, label: "Vehicle", name: "vehicleIn", type: "text",},
+        {id:4, label: "Previous Location", name: "previousLocation", type: "text",},
+        {id:5, label: "Current Location", name: "currentLocation", type: "text",},
     ]
 
-    const inputsColumnB = [
-        {id:1, label: "Type", name: "containerType", type: "text",},
-        {id:2, label: "Size", name: "containerSize", type: "text",},
-        {id:3, label: "Status", name: "containerStatus", type: "text",},
-        {id:4, label: "Condition", name: "containerCondition", type: "text",},
-    ]
+    const inputsColumnB = [{id:1, label: "Type", name: "containerType", type: "text",},]
+    const inputsColumnC = [{id:1, label: "Date In", name: "dateIn", type: "date", placeholder: currentDate.toLocaleDateString('en-US'),}, ] 
+    const inputsColumnD = [{id:2, label: "Arrival Date", name: "arrivalDate", type: "text",},]
+    const inputsColumnE = [{id:3, label: "Special Code", name: "specialCode", type: "text",},]
+    const inputsColumnF = [{id:4, label: "Voyage", name: "voyage", type: "text",},]
 
-    const inputsColumnC = [
-        {id:1, label: "Date In", name: "dateIn", type: "date", placeholder: currentDate.toLocaleDateString('en-US'),},
-    ]
+    const inputsColumnBL = [{id:2, label: "B/L Number", name: "blNumber", type: "text",},]
+
+    const inputsColumnVehicle = [{id:3, label: "Vehicle", name: "vehicleIn", type: "text",},]
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (values.containerNumber === "" || values.serialNumber === "" || values.containerType === "" || values.containerSize === "") {
-            toast.error("Required fields cannot be empty.");
-            console.log("Required fields cannot be empty.");
-            
+        if (values.containerNumber === "" || values.serialNumber === "" || values.containerType === "" || selectedSizeValue.value === "") {
+            toast.error("Required fields cannot be empty."); 
         }
         else {
             try {
@@ -132,45 +246,51 @@ const Container_In = () => {
                         container_id: values.containerNumber,
                         serial_no: values.serialNumber,
                         type: values.containerType,
-                        size: values.containerSize,
-                        status: values.containerStatus,
-                        condition: values.containerCondition,
+                        size: selectedSizeValue.value,
+                        status: selectedStatusValue.value,
+                        condition: selectedCurrentCondValue.value,
+                        rsv: selectedReserveValue.value,
                         customer: customerSelectedValue.customer == null ? customerSelectedValue : customerSelectedValue.customer,
                         consignee: values.consignee,
                         vehicle_in: values.vehicleIn,
-                        ex_vessel: selectedValue.vessel == null ? selectedValue : selectedValue.vessel,
+                        ex_vessel: selectedValueA.vessel == null ? selectedValueA : selectedValueA.vessel,
+                        s_code: values.specialCode,
+                        arr_date: values.arrivalDate,
+                        
+                        vessel: selectedValueB.vessel == null ? selectedValueB : selectedValueB.vessel,
+                        p_location: values.previousLocation,
+                        c_location: values.currentLocation,
+                        p_condition: selectedPreviousCondValue.value,
+                        voyage: values.voyage,
+                        bl_number: values.blNumber,
+                        
                         }),
                 });
-
-                //let resJson = await res.json();
-                if (res.status === 200) {
-                    console.log("Successful");
-                }
-                else{
-                    console.log("Failed");
-                }
-
-                toast.success("Submission successful.");
-                
+                toast.success("Submission successful.");        
                 
             } catch (error) {
                 console.log(error);
             }   
         }
-        
 
+        
     };
 
     const onChange = (e) => {
         setValues({...values,[e.target.name]: e.target.value,});
     };
 
+    console.log(selectedSizeValue);
+    console.log(selectedPreviousCondValue);
+    console.log(selectedCurrentCondValue);
+    console.log(selectedReserveValue);
+
     return (
         <div className="container_in">
             <h2 className="title">Container Inbound</h2>
             <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                    <Grid item xs={6}>
+                <Grid container spacing={1}>
+                    <Grid item md={6}>
                         <Grid container>
                             <Grid item xs={8}>
                                 {inputContainer.map(input => (
@@ -185,11 +305,9 @@ const Container_In = () => {
                             </Grid>
 
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item className="grid-col2">
                             <SearchInput 
                             label="Customer" 
-                            cacheOptions
-                            defaultOptions 
                             value={customerSelectedValue} 
                             getOptionLabel={e => e.customer + ' - '+e.name}
                             getOptionValue={e => e.id} 
@@ -201,36 +319,100 @@ const Container_In = () => {
 
                             {inputsColumnA.map(input => (
                                 <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
-                            ))},
+                            ))}
+
+                            <Grid container >
+                                <Grid item xs={8}>
+                                    {inputsColumnBL.map(input => (
+                                        <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
+                                    ))}
+                                </Grid>
+                                <Grid item xs={4}>
+                                    {inputsColumnVehicle.map(input => (
+                                        <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
+                                    ))}
+                                </Grid>
+                                
+                            </Grid>
                         </Grid>
                     </Grid>
 
-                    <Grid item xs={6}>
+                    <Grid item md={6}>
                         <Grid container>
-                            {inputsColumnB.map(input => (
-                                <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>
-                            ))}
+                            <Grid item md={4}>
+                                {inputsColumnB.map(input => (
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>
+                                ))}
+                            </Grid>
+                            <Grid item md={4}>
+                                <SelectInput options={statusOptions} label="Status" onChange={handleChangeStatus} value={selectedStatusValue} />
+                            </Grid>
+                            <Grid item md={4}>
+                                <SelectInput options={sizeOptions} label="Size" onChange={handleChangeSize} value={selectedSizeValue}/>    
+                            </Grid>
+                            <Grid item md={4}>
+                                <SelectInput options={conditionOptions} label="P. Condition" onChange={handleChangePreviousCond} value={selectedPreviousCondValue}/>
+                            </Grid>
+                            <Grid item md={4}>
+                                <SelectInput options={conditionOptions} label="Condition" onChange={handleChangeCurrentCond} value={selectedCurrentCondValue}/>
+                            </Grid>
+                            <Grid item md={4}>
+                                <SelectInput options={reserveOptions} label="Reserve" onChange={handleChangeReserve} value={selectedReserveValue}/>
+                            </Grid>
+                            
+
                         </Grid>
-                        <Grid item xs={9.7}>
+                        <Grid item xs={12}>
                             <SearchInput 
                             label="Ex. Vessel" 
-                            cacheOptions
-                            defaultOptions 
-                            value={selectedValue} 
+                            value={selectedValueA} 
                             getOptionLabel={e => e.vessel + ' - '+e.name}
                             getOptionValue={e => e.id} 
-                            loadOptions={inputValue.length >2 ? fetchVessels : null} 
-                            onInputChange={handleInputChange} 
-                            onChange={handleChange}
-                            placeholder="Search vessel"
+                            loadOptions={inputValueA.length >2 ? fetchVesselsA : null} 
+                            onInputChange={handleInputChangeA} 
+                            onChange={handleChangeA}
+                            placeholder="Type more than 2 characters to search"
+                            />
+
+                            <SearchInput 
+                            label="Vessel" 
+                            value={selectedValueB} 
+                            getOptionLabel={e => e.vessel + ' - '+e.name}
+                            getOptionValue={e => e.id} 
+                            loadOptions={inputValueB.length >2 ? fetchVesselsB : null} 
+                            onInputChange={handleInputChangeB} 
+                            onChange={handleChangeB}
+                            placeholder="Type more than 2 characters to search"
                             />
 
                         </Grid>
+
                         <Grid container>
-                            {inputsColumnC.map(input => (
-                                <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} readOnly='readOnly'/>
-                            ))}  
-                        </Grid> 
+                            <Grid item md={3}>
+                                {inputsColumnC.map(input => (
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} readOnly='readOnly' type="text"/>
+                                ))} 
+                            </Grid>
+                            <Grid item md={3}>
+                                {inputsColumnD.map(input => (
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} type="date"/>
+                                ))} 
+                            </Grid>
+                            <Grid item md={3}>
+                                {inputsColumnE.map(input => (
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} type="text"/>
+                                ))}
+                            </Grid>
+                            <Grid item md={3}>
+                                {inputsColumnF.map(input => (
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} type="text"/>
+                                ))}
+                            </Grid>
+                             
+                        </Grid>
+                        
+                         
+                        
                     </Grid>
                 </Grid>
                 <button type="submit" onClick={handleSubmit}>Submit</button> 

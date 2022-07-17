@@ -17,6 +17,12 @@ class Containers(models.Model):
     time_in     = models.TimeField(auto_now_add=True)
     vehicle_in  = models.CharField(max_length=100, null=True, blank=True)
     ex_vessel   = models.CharField(max_length=100, null=True, blank=True)
+    vessel      = models.CharField(max_length=100, null=True, blank=True)
+    p_location  = models.CharField(max_length=100, null=True, blank=True)
+    c_location  = models.CharField(max_length=100, null=True, blank=True)
+    voyage      = models.CharField(max_length=100, null=True, blank=True)
+    bl_number   = models.CharField(max_length=100, null=True, blank=True)
+    p_condition = models.CharField(max_length=100, null=True, blank=True)
     
     # Container Out Form Fields
     shipper     = models.CharField(max_length=100, null=True, blank=True)

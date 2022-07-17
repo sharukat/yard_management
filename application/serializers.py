@@ -6,8 +6,8 @@ class ContainerInSerializer(serializers.ModelSerializer):
     class Meta:
         model = Containers
         fields =[
-            'container_id', 'serial_no', 'customer', 'type', 'size', 'status', 'condition', 
-            'consignee', 'date_in', 'time_in','vehicle_in', 'ex_vessel']
+            'container_id', 'serial_no', 'customer', 'type', 'size', 'status', 'condition', 'p_condition','rsv',
+            'consignee', 'date_in', 'time_in','vehicle_in', 'ex_vessel', 'vessel', 'p_location', 'c_location','voyage', 'bl_number','arr_date','s_code']
 
 class VesselSerializer(serializers.ModelSerializer):
     class Meta:
