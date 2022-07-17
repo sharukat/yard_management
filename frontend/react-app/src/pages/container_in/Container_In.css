@@ -6,7 +6,7 @@
     margin-right: 20px;
 }
 
-button{
+.buttonSubmit{
     width: 50%;
     height: 50px;
     border: none;
@@ -21,13 +21,9 @@ button{
     text-align: center;
     position: relative;
     margin-left: 25%;
-
-
-
-
 }
 
-button:hover{
+.buttonSubmit:hover{
     background-color: #0066ff;
 }
 
@@ -42,9 +38,10 @@ form{
 
 .title{
     text-align: center;
+    color: darkblue;
 }
 
-.formInput{
+.formInputPage1{
     display: flex;
     flex-direction: column;
     margin-left: 20px;

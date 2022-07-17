@@ -70,14 +70,14 @@ const statusOptions = [
 
 ]
 
-
+// ==================================================================================================================
 
 const Container_In = () => {
 
     let currentDate = new Date();
     const token = 'Token' + ' 844cc0d9c5390af2e219a5b53b5242f139862f8416d286e920bed42ee30323a3';
-    
-    const [values, setValues] = useState({
+
+    const initialValues = {
         containerNumber: "",
         serialNumber: "",
         containerType: "",
@@ -95,7 +95,9 @@ const Container_In = () => {
         specialCode: "",
         previousLocation: "",
         currentLocation: "",
-    });
+    }
+    
+    const [values, setValues] = useState(initialValues);
 
     // ==================================================================================================================
     // Vessel select useStates
@@ -178,7 +180,6 @@ const Container_In = () => {
     // ==================================================================================================================
 
     // Customer select useStates
-    const [customers, setCustomers] = useState([]);
     const [customerInputValue, setCustomerInputValue] = useState('');
     const [customerSelectedValue, setCustomerSelectedValue] = useState(null);
 
@@ -229,11 +230,28 @@ const Container_In = () => {
 
     const inputsColumnVehicle = [{id:3, label: "Vehicle", name: "vehicleIn", type: "text",},]
 
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (values.containerNumber === "" || values.serialNumber === "" || values.containerType === "" || selectedSizeValue.value === "") {
+        if (values.containerNumber === "" || values.serialNumber === "" || values.containerType === "" || selectedSizeValue === "") {
             toast.error("Required fields cannot be empty."); 
-        }
+            setTimeout(() => {}, 3000);
+            document.getElementById("contInForm").reset();
+            
+
+            setValues(initialValues);
+            setValueA("");
+            setValueB("");
+            setSelectedValueA("");
+            setSelectedValueB("");
+            setSelectedSizeValue("");
+            setPreviousSelectedCondValue("");
+            setCurrentSelectedCondValue("");
+            setSelectedReserveValue("");
+            setSelectedStatusValue("");
+            setCustomerSelectedValue("");
+            setCustomerInputValue("");
+            }
         else {
             try {
                 let res = fetch("http://127.0.0.1:8000/application/container_in/",{
@@ -266,12 +284,32 @@ const Container_In = () => {
                         
                         }),
                 });
-                toast.success("Submission successful.");        
+                toast.success("Submission successful.");  
+                setTimeout(() => {}, 3000);
+                document.getElementById("contInForm").reset();
+                
+
+                setValues(initialValues);
+                setValueA("");
+                setValueB("");
+                setSelectedValueA("");
+                setSelectedValueB("");
+                setSelectedSizeValue("");
+                setPreviousSelectedCondValue("");
+                setCurrentSelectedCondValue("");
+                setSelectedReserveValue("");
+                setSelectedStatusValue("");
+                setCustomerSelectedValue("");
+                setCustomerInputValue("");
+                     
                 
             } catch (error) {
                 console.log(error);
             }   
         }
+
+        
+
 
         
     };
@@ -280,26 +318,21 @@ const Container_In = () => {
         setValues({...values,[e.target.name]: e.target.value,});
     };
 
-    console.log(selectedSizeValue);
-    console.log(selectedPreviousCondValue);
-    console.log(selectedCurrentCondValue);
-    console.log(selectedReserveValue);
-
     return (
         <div className="container_in">
             <h2 className="title">Container Inbound</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} id="contInForm">
                 <Grid container spacing={1}>
                     <Grid item md={6}>
                         <Grid container>
                             <Grid item xs={8}>
                                 {inputContainer.map(input => (
-                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} className="formInputPage1"/>
                                 ))}
                             </Grid>
                             <Grid item xs={4}>
                                 {inputSerial.map(input => (
-                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} className="formInputPage1"/>
                                 ))}
 
                             </Grid>
@@ -318,18 +351,18 @@ const Container_In = () => {
                             />
 
                             {inputsColumnA.map(input => (
-                                <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
+                                <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} className="formInputPage1"/>
                             ))}
 
                             <Grid container >
                                 <Grid item xs={8}>
                                     {inputsColumnBL.map(input => (
-                                        <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
+                                        <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} className="formInputPage1"/>
                                     ))}
                                 </Grid>
                                 <Grid item xs={4}>
                                     {inputsColumnVehicle.map(input => (
-                                        <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
+                                        <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} className="formInputPage1"/>
                                     ))}
                                 </Grid>
                                 
@@ -341,7 +374,7 @@ const Container_In = () => {
                         <Grid container>
                             <Grid item md={4}>
                                 {inputsColumnB.map(input => (
-                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} className="formInputPage1"/>
                                 ))}
                             </Grid>
                             <Grid item md={4}>
@@ -390,22 +423,22 @@ const Container_In = () => {
                         <Grid container>
                             <Grid item md={3}>
                                 {inputsColumnC.map(input => (
-                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} readOnly='readOnly' type="text"/>
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} readOnly='readOnly' type="text" className="formInputPage1"/>
                                 ))} 
                             </Grid>
                             <Grid item md={3}>
                                 {inputsColumnD.map(input => (
-                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} type="date"/>
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} type="date" className="formInputPage1"/>
                                 ))} 
                             </Grid>
                             <Grid item md={3}>
                                 {inputsColumnE.map(input => (
-                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} type="text"/>
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} type="text" className="formInputPage1"/>
                                 ))}
                             </Grid>
                             <Grid item md={3}>
                                 {inputsColumnF.map(input => (
-                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} type="text"/>
+                                    <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} type="text" className="formInputPage1"/>
                                 ))}
                             </Grid>
                              
@@ -415,7 +448,7 @@ const Container_In = () => {
                         
                     </Grid>
                 </Grid>
-                <button type="submit" onClick={handleSubmit}>Submit</button> 
+                <button type="submit" onClick={handleSubmit} className="buttonSubmit">Submit</button> 
                 <ToastContainer />    
             </form>
         </div>
