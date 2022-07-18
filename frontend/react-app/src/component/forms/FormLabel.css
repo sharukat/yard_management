@@ -1,0 +1,8 @@
+.formLabel{
+    display: flex;
+}
+
+.middle{
+    font-family: sans-serif;
+    padding: 5px;
+}
