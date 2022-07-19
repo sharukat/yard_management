@@ -33,6 +33,7 @@ class Containers(models.Model):
     condition_out = models.CharField(max_length=100, null=True, blank=True)
     date_out    = models.DateField(auto_now_add=False, null=True, blank=True)
     time_out    = models.TimeField(auto_now_add=False, null=True, blank=True)
+    rel_order   = models.CharField(max_length=100, null=True, blank=True)
 
     # Other
     arr_date    = models.DateField(auto_now_add=False, null=True, blank=True)

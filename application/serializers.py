@@ -18,3 +18,8 @@ class CustomersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customers
         fields = ['customer']
+
+class ContainerCheckSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Containers
+        fields = ['container_id','serial_no']

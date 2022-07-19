@@ -1,11 +1,19 @@
-import "./SearchInput.css";
+import "./SearchInputInline.css";
 import AsyncSelect from 'react-select/async';
 import { borderRadius } from "@mui/system";
 
-const SearchInput = (props) => {
+const SearchInputInline = (props) => {
+    const customStyles = {
+        control: (base, state) => ({
+            ...base,
+            borderRadius: "5px",
+            height: 20,
+        }),
+    }
+
     const { label, loadOptions, getOptionLabel, value, onInputChange, onChange, getOptionValue, placeholder, labelClass } = props;
     return (
-        <div className='searchInput'>
+        <div className='searchInputInline'>
             <label className={labelClass}>{label}</label>
             <AsyncSelect 
             cacheOptions
@@ -25,4 +33,4 @@ const SearchInput = (props) => {
     );
 };
 
-export default SearchInput;
+export default SearchInputInline;

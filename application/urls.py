@@ -8,4 +8,7 @@ urlpatterns = [
     path('container_in/', views.containerIn, name='container_in'), 
     path('vessels/', views.filterVessel, name='vessels'),
     path('customers/', views.filterCustomers, name='customers'),
+    path('container_check/', views.checkContainer, name='container_check'),
+    path('get_vessel/', views.getVessel, name='get_vessel'),
+    path('get_customer/', views.getCustomer, name='get_customer'),
 ]

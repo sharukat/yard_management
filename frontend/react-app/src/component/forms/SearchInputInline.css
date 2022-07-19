@@ -1,0 +1,14 @@
+.searchInputInline{
+    display: flex;
+    flex-direction: row;
+    margin-left: 10px;
+    justify-content: stretch;
+}
+
+.react-select{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    max-height: 40px !important;
+    width: 100%;
+    display: inline-block;
+}

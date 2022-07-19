@@ -2,11 +2,12 @@ import "./SelectInput.css";
 import Select from 'react-select'
 
 const SelectInput = (props) => {
-    const { label, options, onChange, value } = props;
+    const { label, options, onChange, value, labelClass, key } = props;
     return (
-        <div className='selectInput'>
-            <label>{label}</label>
+        <div className="selectInput">
+            <label className={labelClass}>{label}</label>
             <Select
+            key={key}
             options={options}
             onChange={onChange}
             value={value}
