@@ -1,5 +1,5 @@
 
-const token = 'Token' + ' 406356708ede5fd1d37ddf9aaaa778967addbc96002347f9aeb9f3d3e0966730';
+const token = 'Token' + ' 7758b0ed4c0ce30d34db4fd9c46b6388944f74c79ce6e79cf3044b4abd21de39';
 export const headers = {
   'Authorization': token,
   'Content-Type': 'application/json'

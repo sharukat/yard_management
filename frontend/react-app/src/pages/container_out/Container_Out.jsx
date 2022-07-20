@@ -17,6 +17,9 @@ const Container_Out = () => {
     serialNumber: "",
   }
 
+  let currentDate = new Date();
+  
+
   const initialOutValues = {
     releaseOrderNo: "",
     shipper: "",
@@ -26,7 +29,12 @@ const Container_Out = () => {
     referenceNo: "",
     driverName: "",
     nic: "",
+    date_out: currentDate.toLocaleDateString('en-CA'),
+    time_out: currentDate.toLocaleTimeString('en-US',{hour: '2-digit', minute:'2-digit'}),
+
   }
+
+
 
   const [values, setValues] = useState(initialValues);
   const [outValues, setOutValues] = useState(initialOutValues);
@@ -50,6 +58,54 @@ const Container_Out = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    setOutValues({...outValues, [e.target.name]: e.target.value});
+
+    console.log(outValues);
+    
+    if(container['out_tran'] == true){
+      toast.error("Container already out");
+    }
+    else{
+      try {
+        const url = "http://127.0.0.1:8000/application/container_out/"
+        let res = fetch(url,{
+            headers: headers,
+            method: "POST",
+            body: JSON.stringify({
+                container_id: values.containerNumber,
+                serial_no: values.serialNumber,
+                rel_order: outValues.releaseOrderNo,
+                shipper: outValues.shipper,
+                vehicle_out: outValues.vehicleOut,
+                p_location: outValues.previousLocation,
+                c_location: outValues.currentLocation,
+                reference: outValues.referenceNo,
+                driver: outValues.driverName,
+                nic: outValues.nic,
+                status_out: selectedStatusValue.value,
+                condition_out: selectedCurrentCondValue.value,
+                to_vessel: selectedValueA.vessel,
+                date_out: values.date_out,
+                time_out: values.time_out
+                
+                }),
+        });
+        res.then(res => res.json())
+        .then(data => {
+          console.log(data)
+          if(data == "Success"){
+            toast.success("Submission successful")
+          }
+          else{
+            toast.error("Submission failed")
+          } 
+        })
+
+      } catch (error) {
+          console.log(error);
+      } 
+    }
   }
 
   const [container, setContainer] = useState('');
@@ -57,34 +113,39 @@ const Container_Out = () => {
   const handleCheck = (e) => {
     e.preventDefault();
 
-    const url = 'http://127.0.0.1:8000/application/container_check/?container_id='+ values.containerNumber +'&serial_no='+ values.serialNumber;
-    return axios.get(url, {headers: headers})
-      .then(res => {
-        const container_details = res.data;
-        console.log(container_details);
+    if (values.containerNumber === ''| values.serialNumber === '') {
+      toast.error("Required fields cannot be empty.");
+    }
+    else {
+      const url = 'http://127.0.0.1:8000/application/container_check/?container_id='+ values.containerNumber +'&serial_no='+ values.serialNumber;
+      return axios.get(url, {headers: headers})
+        .then(res => {
+          const container_details = res.data;
+          console.log(container_details);
 
-        if(container_details === "Container does not exist"){
-          toast.error("Container does not exist."); 
-        }
-        else{
-          axios.get('http://127.0.0.1:8000/application/get_vessel/?vessel='+ container_details[0]['ex_vessel'], {headers: headers})
-            .then(res => {
-              const vessel_name = res.data;
-              container_details[0]['ex_vessel'] = container_details[0]['ex_vessel'] + ' - ' + vessel_name;
+          if(container_details === "Container does not exist"){
+            toast.error("Container does not exist."); 
+          }
+          else{
+            axios.get('http://127.0.0.1:8000/application/get_vessel/?vessel='+ container_details[0]['ex_vessel'], {headers: headers})
+              .then(res => {
+                const vessel_name = res.data;
+                container_details[0]['ex_vessel'] = container_details[0]['ex_vessel'] + ' - ' + vessel_name;
 
-              axios.get('http://127.0.0.1:8000/application/get_customer/?customer='+ container_details[0]['customer'], {headers: headers})
-                .then(res => {
-                  const customer_name = res.data;
-                  container_details[0]['customer'] = container_details[0]['customer'] + ' - ' + customer_name;
-                  setContainer(container_details[0]);
-                });
-              
-          });
-          
+                axios.get('http://127.0.0.1:8000/application/get_customer/?customer='+ container_details[0]['customer'], {headers: headers})
+                  .then(res => {
+                    const customer_name = res.data;
+                    container_details[0]['customer'] = container_details[0]['customer'] + ' - ' + customer_name;
+                    setContainer(container_details[0]);
+                  });
+                
+            });
+            
 
-          return container_details[0];
-        }
-      });
+            return container_details[0];
+          }
+        });
+    }
 
   }
 
@@ -219,12 +280,12 @@ const Container_Out = () => {
             <Grid container>
               <Grid item md={4}>
                 {r1c1.map(input => (
-                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut"/> 
+                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut" placeholder={container['out_tran'] == true ? container['rel_order'] : null} readOnly={container['out_tran'] == true}/> 
                 ))}
               </Grid>
               <Grid item md={3}>
                 {r1c2.map(input => (
-                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut"/> 
+                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut" placeholder={container['out_tran'] == true ? container['vehicle_out'] : null} readOnly={container['out_tran'] == true}/> 
                 ))}
               </Grid>
               <Grid item md={2.5}>
@@ -244,11 +305,11 @@ const Container_Out = () => {
             <Grid container>
               <Grid item md={8}>
                 {r2c1.map(input => (
-                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut"/> ))}
+                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut" placeholder={container['out_tran'] == true ? container['shipper'] : null} readOnly={container['out_tran'] == true}/> ))}
               </Grid>
               <Grid item md={4}>
                 {r2c2.map(input => (
-                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut"/> ))}
+                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut" placeholder={container['out_tran'] == true ? container['reference'] : null} readOnly={container['out_tran'] == true}/> ))}
               </Grid>
             </Grid>
             
@@ -269,12 +330,12 @@ const Container_Out = () => {
             <Grid container>
               <Grid item md={6}>
                 {r4c1.map(input => (   
-                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut"/>
+                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut" placeholder={container['out_tran'] == true ? container['p_location'] : null} readOnly={container['out_tran'] == true}/>
                 ))}
               </Grid>
               <Grid item md={6}>
                 {r4c2.map(input => (   
-                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut"/>
+                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut" placeholder={container['out_tran'] == true ? container['c_location'] : null} readOnly={container['out_tran'] == true}/>
                 ))}
               </Grid>
             </Grid>
@@ -282,11 +343,11 @@ const Container_Out = () => {
             <Grid container>
               <Grid item md={8}>
                 {r5c1.map(input => (
-                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut"/> ))}
+                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut" placeholder={container['out_tran'] == true ? container['driver'] : null} readOnly={container['out_tran'] == true}/> ))}
               </Grid>
               <Grid item md={4}>
                 {r5c2.map(input => (
-                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut"/> ))}
+                  <FormInput key={input.id} {...input} values={outValues[input.name]} onChange={onChange} labelClassName="labelOut" placeholder={container['out_tran'] == true ? container['nic'] : null} readOnly={container['out_tran'] == true}/> ))}
               </Grid>
             </Grid>
           </Grid>

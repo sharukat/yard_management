@@ -11,4 +11,5 @@ urlpatterns = [
     path('container_check/', views.checkContainer, name='container_check'),
     path('get_vessel/', views.getVessel, name='get_vessel'),
     path('get_customer/', views.getCustomer, name='get_customer'),
+    path('container_out/', views.containerOut, name='container_out'),
 ]

@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from .models import Containers
 from .forms import ContainerInForm
-from .serializers import ContainerInSerializer, CustomersSerializer, VesselSerializer, ContainerCheckSerializer
+from .serializers import ContainerInSerializer, CustomersSerializer, VesselSerializer, ContainerCheckSerializer, ContainerOutSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from knox.auth import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -28,6 +28,34 @@ def containerIn(request):
         return Response(serializer.data)
     else:
         return Response(serializer.errors)
+
+
+@api_view(['POST',])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def containerOut(request):
+    serializer = ContainerOutSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+
+    container_id = serializer.validated_data['container_id']
+    serial_no= serializer.validated_data['serial_no']
+    rel_order = serializer.validated_data['rel_order']
+    vehicle_out = serializer.validated_data['vehicle_out']
+    shipper = serializer.validated_data['shipper']
+    status_out = serializer.validated_data['status_out']
+    condition_out = serializer.validated_data['condition_out']
+    to_vessel = serializer.validated_data['to_vessel']
+    p_location = serializer.validated_data['p_location']
+    c_location = serializer.validated_data['c_location']
+    reference = serializer.validated_data['reference']
+    driver = serializer.validated_data['driver']
+    nic = serializer.validated_data['nic']
+
+    # print(container_id, serial_no, rel_order, vehicle_out, shipper, status_out, condition_out, to_vessel, p_location, c_location, reference, driver, nic)
+
+    cursor.execute("""UPDATE application_containers SET rel_order = %s, vehicle_out = %s, shipper = %s, status_out = %s, condition_out = %s, to_vessel = %s, p_location = %s, c_location = %s, reference = %s, driver = %s, nic = %s, out_tran=True WHERE container_id = %s AND serial_no = %s""", (rel_order, vehicle_out, shipper, status_out, condition_out, to_vessel, p_location, c_location, reference, driver, nic, container_id, serial_no))
+
+    return Response("Success")
 
 
 @api_view(['GET',])
@@ -121,7 +149,7 @@ def checkContainer(request):
         out_tran = cursor.fetchone()
         if (out_tran[0] == False):
 
-            cursor.execute("SELECT container_id,serial_no,customer,date_in,ex_vessel,arr_date,type,size,condition,consignee FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
+            cursor.execute("SELECT container_id,serial_no,customer,date_in,ex_vessel,arr_date,type,size,condition,consignee,out_tran FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
 
             container_check = cursor.fetchall()
             response = []
@@ -136,7 +164,8 @@ def checkContainer(request):
                     'type':container_check[i][6],
                     'size':container_check[i][7],
                     'condition':container_check[i][8],
-                    'consignee':container_check[i][9]})
+                    'consignee':container_check[i][9],
+                    'out_tran':container_check[i][10]})
 
             if container_check:
                 print(type(container_check))
@@ -144,7 +173,7 @@ def checkContainer(request):
             else:
                 return Response(False)
         else:
-            cursor.execute("SELECT container_id,serial_no,customer,date_in,ex_vessel,p_location,c_location,arr_date,type,size,condition,consignee, rel_order,shipper,vehicle_out,to_vessel,status_out,condition_out,reference,driver,nic,date_out,time_out FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
+            cursor.execute("SELECT container_id,serial_no,customer,date_in,ex_vessel,p_location,c_location,arr_date,type,size,condition,consignee, rel_order,shipper,vehicle_out,to_vessel,status_out,condition_out,reference,driver,nic,date_out,time_out,out_tran FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
 
             container_check = cursor.fetchall()
             response = []
@@ -172,8 +201,9 @@ def checkContainer(request):
                     'driver':container_check[i][19],
                     'nic':container_check[i][20],
                     'date_out':container_check[i][21],
-                    'time_out':container_check[i][22]})
+                    'time_out':container_check[i][22],
+                    'out_tran':container_check[i][23]})
 
-            return Response(False)
+            return Response(response)
     else:
         return Response("Container does not exist")
