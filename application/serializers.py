@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 class ContainerInSerializer(serializers.ModelSerializer):
     class Meta:
+        time_in = serializers.TimeField(format='%H:%M:%S', input_formats=['%H:%M:%S'])
         model = Containers
         fields =[
             'container_id', 'serial_no', 'customer', 'type', 'size', 'status', 'condition', 'p_condition','rsv',
@@ -14,7 +15,7 @@ class ContainerOutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Containers
         fields =[
-            'container_id','serial_no','rel_order', 'vehicle_out', 'shipper', 'status_out', 'condition_out', 'to_vessel', 'p_location', 'c_location','reference', 'driver', 'nic','date_out','time_out']
+            'container_id','serial_no','rel_order', 'vehicle_out', 'shipper', 'status_out', 'condition_out', 'to_vessel', 'p_location', 'c_location','reference', 'driver', 'nic']
 
 
 class VesselSerializer(serializers.ModelSerializer):
@@ -31,3 +32,8 @@ class ContainerCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = Containers
         fields = ['container_id','serial_no']
+
+class ContainerReserveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Containers
+        fields = ['container_id','serial_no','reserved_to','reservation_date']

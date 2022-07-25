@@ -29,9 +29,6 @@ const Container_Out = () => {
     referenceNo: "",
     driverName: "",
     nic: "",
-    date_out: currentDate.toLocaleDateString('en-CA'),
-    time_out: currentDate.toLocaleTimeString('en-US',{hour: '2-digit', minute:'2-digit'}),
-
   }
 
 
@@ -55,58 +52,6 @@ const Container_Out = () => {
   const r5c2 = [{id:1, label:"NIC", name:"nic", type:"text"},]
 
 
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    setOutValues({...outValues, [e.target.name]: e.target.value});
-
-    console.log(outValues);
-    
-    if(container['out_tran'] == true){
-      toast.error("Container already out");
-    }
-    else{
-      try {
-        const url = "http://127.0.0.1:8000/application/container_out/"
-        let res = fetch(url,{
-            headers: headers,
-            method: "POST",
-            body: JSON.stringify({
-                container_id: values.containerNumber,
-                serial_no: values.serialNumber,
-                rel_order: outValues.releaseOrderNo,
-                shipper: outValues.shipper,
-                vehicle_out: outValues.vehicleOut,
-                p_location: outValues.previousLocation,
-                c_location: outValues.currentLocation,
-                reference: outValues.referenceNo,
-                driver: outValues.driverName,
-                nic: outValues.nic,
-                status_out: selectedStatusValue.value,
-                condition_out: selectedCurrentCondValue.value,
-                to_vessel: selectedValueA.vessel,
-                date_out: values.date_out,
-                time_out: values.time_out
-                
-                }),
-        });
-        res.then(res => res.json())
-        .then(data => {
-          console.log(data)
-          if(data == "Success"){
-            toast.success("Submission successful")
-          }
-          else{
-            toast.error("Submission failed")
-          } 
-        })
-
-      } catch (error) {
-          console.log(error);
-      } 
-    }
-  }
 
   const [container, setContainer] = useState('');
 
@@ -189,6 +134,77 @@ const Container_Out = () => {
 
 
   // =========================================================================================================
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if(container['out_tran'] == true){
+      toast.error("Container already out");
+    }
+    else{
+      try {
+        const url = "http://127.0.0.1:8000/application/container_out/"
+        let res = fetch(url,{
+            headers: headers,
+            method: "POST",
+            body: JSON.stringify({
+                container_id: values.containerNumber,
+                serial_no: values.serialNumber,
+                rel_order: outValues.releaseOrderNo,
+                shipper: outValues.shipper,
+                vehicle_out: outValues.vehicleOut,
+                p_location: outValues.previousLocation,
+                c_location: outValues.currentLocation,
+                reference: outValues.referenceNo,
+                driver: outValues.driverName,
+                nic: outValues.nic,
+                status_out: selectedStatusValue.value,
+                condition_out: selectedCurrentCondValue.value,
+                to_vessel: selectedValueA.vessel,
+                date_out: outValues.date_out,
+                time_out: outValues.time_out
+                
+                }),
+        });
+        res.then(res => res.json())
+        .then(data => {
+          console.log(data)
+          if(data == "Success"){
+            toast.success("Submission successful")
+          }
+          else{
+            toast.error("Submission failed")
+          } 
+        })
+
+      } catch (error) {
+          console.log(error);
+      } 
+
+      setTimeout(() => {}, 2000);
+      document.getElementById("contInForm").reset();
+      
+
+      
+
+
+    }
+    // document.getElementById("contInForm").reset();
+    setContainer('');
+    setValues('');
+    // setOutValues(outValues.releaseOrderNo = '', outValues.shipper = '', outValues.vehicleOut = '', outValues.previousLocation = '', outValues.currentLocation = '', outValues.referenceNo = '', outValues.driverName = '', outValues.nic = '', outValues.date_out = '', outValues.time_out = '');
+    // setValueA("");
+    // setSelectedValueA("");
+    // setSelectedStatusValue("");
+    // setCurrentSelectedCondValue("");
+    // setSelectedStatusValue("");
+
+    // console.log("Values:",values);
+    // console.log("Out Values:",outValues);
+    // console.log("Selected Value:",selectedValueA);
+    // console.log("Status Value:",selectedStatusValue);
+    // console.log("Condition Value:",selectedCurrentCondValue);
+  }
 
 
   return (
@@ -290,11 +306,11 @@ const Container_Out = () => {
               </Grid>
               <Grid item md={2.5}>
                 <SelectInput key={statusOptions.key} options={statusOptions} label="Status Out" onChange={handleChangeStatus} 
-                value={selectedStatusValue} className="selectInput" labelClass="labelOut" />
+                value={selectedStatusValue} className="selectInput" labelClass="labelOut" placeholder= {container['out_tran'] == true ? container['status_out'] : null} isDisabled={container['out_tran'] == true ? true : false}/>
               </Grid>
               <Grid item md={2.5}>
                 <SelectInput key={conditionOptions.key} options={conditionOptions} label="Condition Out" onChange={handleChangeCurrentCond} 
-                value={selectedCurrentCondValue} labelClass="labelOut"/>
+                value={selectedCurrentCondValue} labelClass="labelOut" placeholder= {container['out_tran'] == true ? container['condition_out'] : null} isDisabled={container['out_tran'] == true ? true : false}/>
 
               </Grid>
               
@@ -323,7 +339,8 @@ const Container_Out = () => {
                 loadOptions={inputValueA.length >2 ? fetchVesselsA : null} 
                 onInputChange={handleInputChangeA} 
                 onChange={handleChangeA}
-                placeholder="Type more than 2 characters to search"
+                placeholder= {container['out_tran'] == true ? container['to_vessel'] : "Type more than 2 characters to search"} 
+                isDisabled={container['out_tran'] == true ? true : false}
                 />
             </Grid>
 

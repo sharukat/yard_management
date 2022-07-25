@@ -1,0 +1,13 @@
+.containerIn{
+    flex: 4;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.container_box{
+    display: flex;
+    margin-top: 30px;
+
+}

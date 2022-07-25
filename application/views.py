@@ -5,11 +5,12 @@ from rest_framework.response import Response
 
 from .models import Containers
 from .forms import ContainerInForm
-from .serializers import ContainerInSerializer, CustomersSerializer, VesselSerializer, ContainerCheckSerializer, ContainerOutSerializer
+from .serializers import ContainerInSerializer, CustomersSerializer, VesselSerializer, ContainerCheckSerializer, ContainerOutSerializer,ContainerReserveSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from knox.auth import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.http import JsonResponse
+from datetime import datetime
 
 # Postgresql database connection related library and cursor establishment
 from django.db import connection
@@ -51,9 +52,14 @@ def containerOut(request):
     driver = serializer.validated_data['driver']
     nic = serializer.validated_data['nic']
 
+    now=datetime.now()
+    time_out = now.strftime("%H:%M:%S")
+    date_out = now.strftime("%Y-%m-%d")
+    
+
     # print(container_id, serial_no, rel_order, vehicle_out, shipper, status_out, condition_out, to_vessel, p_location, c_location, reference, driver, nic)
 
-    cursor.execute("""UPDATE application_containers SET rel_order = %s, vehicle_out = %s, shipper = %s, status_out = %s, condition_out = %s, to_vessel = %s, p_location = %s, c_location = %s, reference = %s, driver = %s, nic = %s, out_tran=True WHERE container_id = %s AND serial_no = %s""", (rel_order, vehicle_out, shipper, status_out, condition_out, to_vessel, p_location, c_location, reference, driver, nic, container_id, serial_no))
+    cursor.execute("""UPDATE application_containers SET rel_order = %s, vehicle_out = %s, shipper = %s, status_out = %s, condition_out = %s, to_vessel = %s, p_location = %s, c_location = %s, reference = %s, driver = %s, nic = %s, date_out = %s, time_out = %s,out_tran=True WHERE container_id = %s AND serial_no = %s""", (rel_order, vehicle_out, shipper, status_out, condition_out, to_vessel, p_location, c_location, reference, driver, nic, date_out, time_out,container_id, serial_no))
 
     return Response("Success")
 
@@ -151,6 +157,7 @@ def checkContainer(request):
 
             cursor.execute("SELECT container_id,serial_no,customer,date_in,ex_vessel,arr_date,type,size,condition,consignee,out_tran FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
 
+            
             container_check = cursor.fetchall()
             response = []
             for i in range(0,len(container_check)):
@@ -174,6 +181,7 @@ def checkContainer(request):
                 return Response(False)
         else:
             cursor.execute("SELECT container_id,serial_no,customer,date_in,ex_vessel,p_location,c_location,arr_date,type,size,condition,consignee, rel_order,shipper,vehicle_out,to_vessel,status_out,condition_out,reference,driver,nic,date_out,time_out,out_tran FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
+
 
             container_check = cursor.fetchall()
             response = []
@@ -207,3 +215,101 @@ def checkContainer(request):
             return Response(response)
     else:
         return Response("Container does not exist")
+
+
+
+@api_view(['GET',])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def checkReservation(request):
+
+    serializer = ContainerCheckSerializer(data=request.query_params)
+    serializer.is_valid(raise_exception=True)
+    container_id = request.query_params['container_id']
+    serial_no = request.query_params['serial_no']
+
+    if (Containers.objects.filter(container_id=container_id, serial_no=serial_no).exists()):
+        cursor.execute("SELECT out_tran, rsv FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
+        condition = cursor.fetchone()
+        out_tran = condition[0]
+        rsv = condition[1]
+
+        print(condition)
+        if (out_tran == False and rsv == False):
+
+            cursor.execute("SELECT container_id,serial_no,customer,date_in,ex_vessel,type,size,condition,consignee,out_tran,rsv FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
+
+            
+            container_check = cursor.fetchall()
+            response = []
+            for i in range(0,len(container_check)):
+                response.append({
+                    'container_id':container_check[i][0],
+                    'serial_no':container_check[i][1],
+                    'customer':container_check[i][2],
+                    'date_in':container_check[i][3],
+                    'ex_vessel':container_check[i][4],
+                    'type':container_check[i][5],
+                    'size':container_check[i][6],
+                    'condition':container_check[i][7],
+                    'consignee':container_check[i][8],
+                    'out_tran':container_check[i][9],
+                    'rsv':container_check[i][10],})
+
+            if container_check:
+                return Response(response)
+            else:
+                return Response(False)
+
+        elif (out_tran == False and rsv == True):
+            cursor.execute("SELECT container_id,serial_no,customer,date_in,ex_vessel,type,size,condition,consignee,out_tran, reserved_to, reservation_date, reserved_on,rsv FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
+
+            container_check = cursor.fetchall()
+            response = []
+            for i in range(0,len(container_check)):
+                response.append({
+                    'container_id':container_check[i][0],
+                    'serial_no':container_check[i][1],
+                    'customer':container_check[i][2],
+                    'date_in':container_check[i][3],
+                    'ex_vessel':container_check[i][4],
+                    'type':container_check[i][5],
+                    'size':container_check[i][6],
+                    'condition':container_check[i][7],
+                    'consignee':container_check[i][8],
+                    'out_tran':container_check[i][9],
+                    'reserved_to':container_check[i][10],
+                    'reservation_date':container_check[i][11],
+                    'reserved_on':container_check[i][12],
+                    'rsv':container_check[i][13]})
+
+            if container_check:
+                return Response(response)
+            else:
+                return Response(False)
+
+        else:
+            return Response("Container is already out")
+    else:
+        return Response("Container does not exist")
+
+
+
+@api_view(['POST',])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def containerReserve(request):
+    serializer = ContainerReserveSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+
+    container_id = serializer.validated_data['container_id']
+    serial_no= serializer.validated_data['serial_no']
+    reserved_to = serializer.validated_data['reserved_to']
+    reservation_date = serializer.validated_data['reservation_date']
+
+    now=datetime.now()
+    reserved_on = now.strftime("%Y-%m-%d")
+
+    cursor.execute("""UPDATE application_containers SET reserved_to = %s, reservation_date = %s, reserved_on = %s, rsv = True WHERE container_id = %s AND serial_no = %s""", (reserved_to, reservation_date, reserved_on, container_id, serial_no))
+
+    return Response("Success")

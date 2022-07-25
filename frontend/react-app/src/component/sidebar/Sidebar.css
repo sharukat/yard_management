@@ -1,14 +1,14 @@
 .sidebar{
     flex: 1;
-    height: calc(100vh - 50px); 
+    height: calc(100vh); 
     position: sticky;
     top: 50px;
-    background-color: rgb(251,251,255);
+    background-color: #003B56;
 }
 
 .sidebarWrapper{
     padding: 20px;
-    color: #555;
+    color: white;
 }
 
 .sidebarMenu{
@@ -31,8 +31,29 @@
 .sidebarListItem.active,
 .sidebarListItem:hover{
     background-color: rgb(228,228,250);
+    color: black;
 }
 
 .sidebarIcon{
     margin-right: 10px;
+}
+
+.com_titile{
+    font-family: sans-serif;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    margin-top: 25px;
+    font-size: 24px;
+    
+}
+
+.com_abb{
+    font-family: sans-serif;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    margin-top: 5px;
+    font-size: 24px;
+
 }

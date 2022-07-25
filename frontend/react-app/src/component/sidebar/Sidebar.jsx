@@ -11,8 +11,12 @@ import { Link } from "react-router-dom";
 export default function Sidebar() {
   return (
     <div className='sidebar'>
+        <div className='com_titile'>Asian Container Terminal</div>
+        <div className='com_abb'>(ACT)</div>
+        
         <div className="sidebarWrapper">
             <div className='sidebarMenue'>
+            
             <ul className='sidebarList'>
                 <Link to="/" className='link'>
                     <li className='sidebarListItem'>
@@ -21,17 +25,22 @@ export default function Sidebar() {
                     </li>
                 </Link>
                 
-                <Link to="/container_out" className='link'>
+                <Link to="/containerOut" className='link'>
                     <li className='sidebarListItem'>
                         <NorthWestIcon className='sidebarIcon'/>
                         Container Outbound
                     </li>
                 </Link>
                 
-                <li className='sidebarListItem'>
-                    <GradingIcon className='sidebarIcon'/>
-                    Reservation
-                </li>
+                <Link to="/containerReservation" className='link'>
+                    <li className='sidebarListItem'>
+                        <GradingIcon className='sidebarIcon'/>
+                        Reservation
+                    </li>
+                </Link>
+                
+                
+            
                 <li className='sidebarListItem'>
                     <PendingActionsIcon className='sidebarIcon'/>
                     Overdue

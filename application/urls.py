@@ -12,4 +12,6 @@ urlpatterns = [
     path('get_vessel/', views.getVessel, name='get_vessel'),
     path('get_customer/', views.getCustomer, name='get_customer'),
     path('container_out/', views.containerOut, name='container_out'),
+    path('reservation_check/', views.checkReservation, name='reservation_check'),
+    path('reserve/', views.containerReserve, name='reserve'),
 ]
