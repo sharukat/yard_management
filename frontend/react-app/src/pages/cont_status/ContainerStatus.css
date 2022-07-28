@@ -1,0 +1,20 @@
+.containerStatus{
+    flex: 4;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.containerStatus_box{
+    display: flex;
+    margin-top: 10px;
+
+}
+
+.box_border{
+    border: 1px solid rgb(182, 179, 179);
+    border-radius: 5px;
+    padding: 10px;
+    margin-left: 10px;
+}

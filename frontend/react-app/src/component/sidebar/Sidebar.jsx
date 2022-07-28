@@ -40,15 +40,19 @@ export default function Sidebar() {
                 </Link>
                 
                 
-            
-                <li className='sidebarListItem'>
-                    <PendingActionsIcon className='sidebarIcon'/>
-                    Overdue
-                </li>
-                <li className='sidebarListItem'>
-                    <ClearAllIcon/>
-                    Clear Container Outbound
-                </li>
+                <Link to="/customerReports" className='link'>
+                    <li className='sidebarListItem'>
+                        <PendingActionsIcon className='sidebarIcon'/>
+                        Reports
+                    </li>
+                </Link>
+
+                <Link to="/containerStatus" className='link'>
+                    <li className='sidebarListItem'>
+                        <ClearAllIcon/>
+                        Container Status
+                    </li>
+                </Link>
             </ul>
             </div>
         </div>

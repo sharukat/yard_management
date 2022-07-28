@@ -14,4 +14,5 @@ urlpatterns = [
     path('container_out/', views.containerOut, name='container_out'),
     path('reservation_check/', views.checkReservation, name='reservation_check'),
     path('reserve/', views.containerReserve, name='reserve'),
+    path('checkStatus/', views.checkStatus, name='check_status'),
 ]

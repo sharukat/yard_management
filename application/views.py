@@ -313,3 +313,80 @@ def containerReserve(request):
     cursor.execute("""UPDATE application_containers SET reserved_to = %s, reservation_date = %s, reserved_on = %s, rsv = True WHERE container_id = %s AND serial_no = %s""", (reserved_to, reservation_date, reserved_on, container_id, serial_no))
 
     return Response("Success")
+
+
+@api_view(['GET',])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def checkStatus(request):
+
+    serializer = ContainerCheckSerializer(data=request.query_params)
+    serializer.is_valid(raise_exception=True)
+    container_id = request.query_params['container_id']
+    serial_no = request.query_params['serial_no']
+
+    if (Containers.objects.filter(container_id=container_id, serial_no=serial_no).exists()):
+        cursor.execute("SELECT out_tran FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
+        out_tran = cursor.fetchone()
+        if (out_tran[0] == False):
+
+            cursor.execute("SELECT container_id,serial_no,customer,date_in,time_in,ex_vessel,status,type,size,condition,consignee,vehicle_in,out_tran FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
+
+            
+            container_check = cursor.fetchall()
+            response = []
+            for i in range(0,len(container_check)):
+                response.append({
+                    'container_id':container_check[i][0],
+                    'serial_no':container_check[i][1],
+                    'customer':container_check[i][2],
+                    'date_in':container_check[i][3],
+                    'time_in':container_check[i][4].strftime("%I:%M %p"),
+                    'ex_vessel':container_check[i][5],
+                    'status':container_check[i][6],
+                    'type':container_check[i][7],
+                    'size':container_check[i][8],
+                    'condition':container_check[i][9],
+                    'consignee':container_check[i][10],
+                    'vehicle_in':container_check[i][11],
+                    'out_tran':container_check[i][12],
+                    
+                    })
+
+            if container_check:
+                return Response(response)
+            else:
+                return Response(False)
+        else:
+            cursor.execute("SELECT container_id,serial_no,customer,date_in,time_in,ex_vessel,status,type,size,condition,consignee, vehicle_in,shipper,vehicle_out,to_vessel,status_out,condition_out,reference,date_out,time_out,out_tran FROM application_containers WHERE container_id = %s AND serial_no = %s", [container_id, serial_no])
+
+
+            container_check = cursor.fetchall()
+            response = []
+            for i in range(0,len(container_check)):
+                response.append({
+                    'container_id':container_check[i][0],
+                    'serial_no':container_check[i][1],
+                    'customer':container_check[i][2],
+                    'date_in':container_check[i][3],
+                    'time_in':container_check[i][4].strftime("%I:%M %p"),
+                    'ex_vessel':container_check[i][5],
+                    'status':container_check[i][6],
+                    'type':container_check[i][7],
+                    'size':container_check[i][8],
+                    'condition':container_check[i][9],
+                    'consignee':container_check[i][10],
+                    'vehicle_in':container_check[i][11],
+                    'shipper':container_check[i][12],
+                    'vehicle_out':container_check[i][13],
+                    'to_vessel':container_check[i][14],
+                    'status_out':container_check[i][15],
+                    'condition_out':container_check[i][16],
+                    'reference':container_check[i][17],
+                    'date_out':container_check[i][18],
+                    'time_out':container_check[i][19].strftime("%I:%M %p"),
+                    'out_tran':container_check[i][20]})
+
+            return Response(response)
+    else:
+        return Response("Container does not exist")

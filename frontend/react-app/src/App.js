@@ -9,6 +9,8 @@ import Container_Out from "./pages/container_out/Container_Out";
 import ContainerOut from "./pages/cont_out/ContainerOut";
 import ContainerIn from "./pages/cont_in/ContainerIn";
 import ContainerReservation from "./pages/cont_rsv/ContainerReservation";
+import CustomerReports from "./pages/reports/CustomerReports";
+import ContainerStatus from "./pages/cont_status/ContainerStatus";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
             <Route path="/" element={<ContainerIn/>}/>
             <Route path="/containerOut" element={<ContainerOut/>}/>
             <Route path="/containerReservation" element={<ContainerReservation/>}/>
+            <Route path="/customerReports" element={<CustomerReports/>}/>
+            <Route path="/containerStatus" element={<ContainerStatus/>}/>
           </Routes>
         </div>
 
